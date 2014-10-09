@@ -6,14 +6,15 @@
 
     <Button
         android:layout_width="fill_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="100dp"
         android:text="Locations"
+        android:layout_marginBottom="50dp"
         android:id="@+id/btn_locations"
         android:layout_gravity="center_horizontal" />
 
     <Button
         android:layout_width="fill_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="100dp"
         android:text="Add Location"
         android:id="@+id/btn_addLcn" />
 </LinearLayout>
