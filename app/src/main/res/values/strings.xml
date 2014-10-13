@@ -6,5 +6,7 @@
     <string name="action_settings">Settings</string>
     <string name="title_activity_locations">LocationsActivity</string>
     <string name="title_activity_add_location">AddLocationActivity</string>
+    <string name="add_location">Add Location</string>
+    <string name="locations">Locations</string>
 
 </resources>
