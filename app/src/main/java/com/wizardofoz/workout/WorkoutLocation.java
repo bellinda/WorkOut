@@ -1,8 +1,5 @@
 package com.wizardofoz.workout;
 
-import android.location.Location;
-import android.media.Image;
-
 import com.telerik.everlive.sdk.core.model.base.DataItem;
 import com.telerik.everlive.sdk.core.model.system.GeoPoint;
 import com.telerik.everlive.sdk.core.serialization.ServerProperty;
@@ -13,7 +10,7 @@ import java.util.UUID;
 public class WorkoutLocation extends DataItem {
     @ServerProperty("Name")
     private String name;
-    @ServerProperty("Location")
+    @ServerProperty("Coordinates")
     private GeoPoint location;
     @ServerProperty("Picture")
     private UUID picture;
