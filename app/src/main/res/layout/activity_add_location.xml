@@ -27,13 +27,14 @@
         android:weightSum="1"
         android:id="@+id/linearLayout">
 
-        <TextView
+        <EditText
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:id="@+id/addName"
-            android:layout_weight="0.06"
+            android:layout_weight="0.14"
+            android:hint="Name"
             android:textSize="40dp"
-            android:hint="Name" />
+            android:inputType="text" />
 
         <EditText
             android:layout_width="match_parent"
@@ -41,7 +42,7 @@
             android:inputType="textMultiLine"
             android:ems="10"
             android:id="@+id/addDescription"
-            android:layout_weight="0.06"
+            android:layout_weight="0.22"
             android:hint="Description"
             android:textSize="40dp" />
 

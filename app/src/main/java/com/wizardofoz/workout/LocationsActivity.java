@@ -10,6 +10,8 @@ import android.widget.ListView;
 import android.widget.Toast;
 
 import com.telerik.everlive.sdk.core.EverliveApp;
+import com.telerik.everlive.sdk.core.query.definition.sorting.SortDirection;
+import com.telerik.everlive.sdk.core.query.definition.sorting.SortingDefinition;
 import com.telerik.everlive.sdk.core.result.RequestResult;
 import com.telerik.everlive.sdk.core.result.RequestResultCallbackAction;
 
@@ -23,6 +25,8 @@ public class LocationsActivity extends Activity {
     private ArrayList<WorkoutLocation> mLocations;
     private Context context;
     private WorkoutLocationsAdapter mAdapter;
+
+    private Activity activity = this;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -56,27 +60,27 @@ public class LocationsActivity extends Activity {
         app = Everlive.getEverlive();
         mLocations = null;
         app.workWith().data(WorkoutLocation.class)
-                .getAll()
+                .get()
                 .executeAsync(new RequestResultCallbackAction<ArrayList<WorkoutLocation>>() {
                     @Override
                     public void invoke(RequestResult<ArrayList<WorkoutLocation>> requestResult) {
                         if (requestResult.getSuccess()) {
                             mLocations = requestResult.getValue();
                             mAdapter = new WorkoutLocationsAdapter(LocationsActivity.this, R.layout.locations_listview_item, mLocations);
+                            activity.runOnUiThread(new Runnable() {
+                                @Override
+                                public void run() {
+                                    Toast.makeText(context, "Locations loaded!", Toast.LENGTH_LONG).show();
+
+                                    locationsList = (ListView)findViewById(R.id.listView);
+
+                                    locationsList.setAdapter(mAdapter);
+                                }
+                            });
                         } else {
                             Toast.makeText(context, "Couldn't load the locations!", Toast.LENGTH_LONG).show();
                         }
                     }
                 });
-
-        while(mAdapter == null){
-
-        }
-
-        Toast.makeText(context, "Locations loaded!", Toast.LENGTH_LONG).show();
-
-        locationsList = (ListView)findViewById(R.id.listView);
-
-        locationsList.setAdapter(mAdapter);
     }
 }

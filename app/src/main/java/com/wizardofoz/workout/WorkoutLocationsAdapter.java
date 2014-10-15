@@ -55,17 +55,21 @@ public class WorkoutLocationsAdapter extends ArrayAdapter<WorkoutLocation> {
             holder.name = (TextView)row.findViewById(R.id.txtName);
             holder.description = (TextView)row.findViewById(R.id.txtDescription);
 
-            row.setTag(holder);
+
         } else {
             holder = (WorkoutLocationHolder)row.getTag();
         }
+
+        row.setTag(holder);
 
         WorkoutLocation location = data.get(position);
         URL url = null;
         Bitmap image = null;
         try {
-            url = new URL(Everlive.getEverlive().workWith().files().download(location.getPicture()).getDownloadPath());
-            image = new GetImageAsync().execute(url).get();
+            if (location.getPicture() != null){
+                url = new URL(Everlive.getEverlive().workWith().files().download(location.getPicture()).getDownloadPath());
+                image = new GetImageAsync().execute(url).get();
+            }
         } catch (IOException e) {
             e.printStackTrace();
         } catch (InterruptedException e) {
