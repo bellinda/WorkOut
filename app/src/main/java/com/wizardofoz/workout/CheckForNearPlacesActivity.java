@@ -61,12 +61,12 @@ public class CheckForNearPlacesActivity extends Activity {
                             }
                             if(nearLocations.isEmpty()){
                                 notifManager = (NotificationManager)context.getSystemService(Context.NOTIFICATION_SERVICE);
-                                Notification notify=new Notification(android.R.drawable.
-                                        stat_notify_more,"Warning: No Connection!",System.currentTimeMillis());
+                                Notification notify=new Notification(R.drawable.disconnected,"Warning: No Connection!",System.currentTimeMillis());
                                 PendingIntent pending=PendingIntent.getActivity(
                                         getApplicationContext(),0, new Intent(),0);
                                 notify.setLatestEventInfo(getApplicationContext(),"No connection","You should turn on either your GPS or your WiFi",pending);
                                 notifManager.notify(0, notify);
+                                finish();
 //                                Toast.makeText(context, "Couldn't load the locations!", Toast.LENGTH_LONG).show();
 //                                Looper.prepare();
                             } else {
