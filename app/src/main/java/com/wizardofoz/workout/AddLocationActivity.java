@@ -16,6 +16,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.telerik.everlive.sdk.core.EverliveApp;
+import com.telerik.everlive.sdk.core.model.system.GeoPoint;
 import com.telerik.everlive.sdk.core.query.definition.FileField;
 import com.telerik.everlive.sdk.core.result.RequestResult;
 import com.telerik.everlive.sdk.core.result.RequestResultCallbackAction;
@@ -96,6 +97,11 @@ public class AddLocationActivity extends ActionBarActivity implements View.OnCli
         final WorkoutLocation newLocation = new WorkoutLocation();
         final String locName = name.getText().toString();
         final String locDescription = description.getText().toString();
+
+        GPSTracker gpsTracker = new GPSTracker(this);
+        final double currentLat = gpsTracker.getLatitude();
+        final double currentLong = gpsTracker.getLongitude();
+
         if (locName.equals("")){
             Toast.makeText(context, "Invalid name!", Toast.LENGTH_LONG).show();
             return;
@@ -126,6 +132,7 @@ public class AddLocationActivity extends ActionBarActivity implements View.OnCli
                         newLocation.setName(locName);
                         newLocation.setDescription(locDescription);
                         newLocation.setPicture(id);
+                        newLocation.setLocation(new GeoPoint(currentLat, currentLong));
                         app.workWith().data(WorkoutLocation.class).create(newLocation).executeAsync(new RequestResultCallbackAction<ArrayList<WorkoutLocation>>() {
                             @Override
                             public void invoke(RequestResult<ArrayList<WorkoutLocation>> requestResult) {
