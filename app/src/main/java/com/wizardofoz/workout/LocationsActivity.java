@@ -3,10 +3,9 @@ package com.wizardofoz.workout;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.Context;
-import android.location.LocationManager;
+import android.content.DialogInterface;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
-import android.content.DialogInterface;
 import android.os.Bundle;
 import android.util.FloatMath;
 import android.view.Menu;
@@ -18,18 +17,13 @@ import android.widget.ListView;
 import android.widget.Toast;
 
 import com.telerik.everlive.sdk.core.EverliveApp;
-import com.telerik.everlive.sdk.core.query.definition.sorting.SortDirection;
-import com.telerik.everlive.sdk.core.query.definition.sorting.SortingDefinition;
 import com.telerik.everlive.sdk.core.result.RequestResult;
 import com.telerik.everlive.sdk.core.result.RequestResultCallbackAction;
 import com.wizardofoz.workout.local.Location;
-import com.wizardofoz.workout.local.LocationSQLiteHelper;
 import com.wizardofoz.workout.local.LocationsDataSource;
 
 import java.sql.SQLException;
 import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
 
 
 public class LocationsActivity extends Activity implements View.OnTouchListener {
@@ -95,7 +89,6 @@ public class LocationsActivity extends Activity implements View.OnTouchListener 
         });
 
 
-
         initialize();
     }
 
@@ -142,7 +135,7 @@ public class LocationsActivity extends Activity implements View.OnTouchListener 
         context = this;
         mDataSource = new LocationsDataSource(context);
         boolean hasNetworkConnection = isOnline();
-        if (!hasNetworkConnection){
+        if(!hasNetworkConnection){
             new Thread(new Runnable() {
                 @Override
                 public void run() {
@@ -153,13 +146,13 @@ public class LocationsActivity extends Activity implements View.OnTouchListener 
                     }
 
                     mLocalLocations = mDataSource.getAllLocations();
-                    mLocalAdapter = new LocalLocationsAdapter(context, R.layout.locations_listview_item, mLocalLocations);
+                    mLocalAdapter = new LocalLocationsAdapter(context, R.layout.row_package_layout, mLocalLocations);
                     activity.runOnUiThread(new Runnable() {
                         @Override
                         public void run() {
                             Toast.makeText(context, "Locations loaded!", Toast.LENGTH_LONG).show();
 
-                            locationsList = (ListView) findViewById(R.id.listView);
+                            //locationsList = (ListView) findViewById(R.id.listView);
 
                             locationsList.setAdapter(mLocalAdapter);
                         }
@@ -168,8 +161,7 @@ public class LocationsActivity extends Activity implements View.OnTouchListener 
                     mDataSource.close();
                 }
             }).start();
-
-        } else {
+        }else {
             app = Everlive.getEverlive();
             mLocations = null;
             app.workWith().data(WorkoutLocation.class)
@@ -179,14 +171,14 @@ public class LocationsActivity extends Activity implements View.OnTouchListener 
                         public void invoke(RequestResult<ArrayList<WorkoutLocation>> requestResult) {
                             if (requestResult.getSuccess()) {
                                 mLocations = requestResult.getValue();
-                                Collections.reverse(mLocations);
-                                        mAdapter = new WorkoutLocationsAdapter(LocationsActivity.this, R.layout.locations_listview_item, mLocations);
+                                //mAdapter = new WorkoutLocationsAdapter(LocationsActivity.this, R.layout.locations_listview_item, mLocations);
+                                mAdapter = new WorkoutLocationsAdapter(LocationsActivity.this, R.layout.row_package_layout, mLocations);
                                 activity.runOnUiThread(new Runnable() {
                                     @Override
                                     public void run() {
                                         Toast.makeText(context, "Locations loaded!", Toast.LENGTH_LONG).show();
 
-                                        locationsList = (ListView) findViewById(R.id.listView);
+//                                    locationsList = (ListView)findViewById(R.id.listView);
 
                                         locationsList.setAdapter(mAdapter);
                                     }

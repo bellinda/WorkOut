@@ -1,8 +1,6 @@
 package com.wizardofoz.workout;
 
-import com.telerik.everlive.sdk.core.model.system.GeoPoint;
-import com.wizardofoz.workout.local.Location;
-import com.wizardofoz.workout.local.LocationsDataSource;
+import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
@@ -23,6 +21,7 @@ import com.telerik.everlive.sdk.core.query.definition.filtering.simple.ValueCond
 import com.telerik.everlive.sdk.core.query.definition.filtering.simple.ValueConditionOperator;
 import com.telerik.everlive.sdk.core.result.RequestResult;
 import com.telerik.everlive.sdk.core.result.RequestResultCallbackAction;
+import com.wizardofoz.workout.local.LocationsDataSource;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
@@ -49,12 +48,10 @@ public class AddLocationActivity extends ActionBarActivity implements View.OnCli
     String locName;
     String locDescription;
     String picName;
-    GeoPoint geolocation;
 
+    Activity activity = this;
     LocationsDataSource dataSource;
-    GPSTracker tracker;
     EverliveApp app;
-
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -67,7 +64,7 @@ public class AddLocationActivity extends ActionBarActivity implements View.OnCli
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
-        getMenuInflater().inflate(R.menu.add_location, menu);
+        getMenuInflater().inflate(R.menu.home, menu);
         return true;
     }
 
@@ -87,9 +84,6 @@ public class AddLocationActivity extends ActionBarActivity implements View.OnCli
         app = Everlive.getEverlive();
 
         context = this;
-        dataSource = new LocationsDataSource(AddLocationActivity.this);
-        tracker = new GPSTracker(context);
-
         name = (TextView)this.findViewById(R.id.addName);
         description = (EditText)this.findViewById(R.id.addDescription);
         getLocationImage = (Button)this.findViewById(R.id.btnTakePicture);
@@ -112,10 +106,6 @@ public class AddLocationActivity extends ActionBarActivity implements View.OnCli
         newLocation = new WorkoutLocation();
         locName = name.getText().toString();
         locDescription = description.getText().toString();
-        geolocation = new GeoPoint();
-        geolocation.setLatitude(tracker.getLatitude());
-        geolocation.setLongitude(tracker.getLongitude());
-
         if (locName.equals("")){
             Toast.makeText(context, "Invalid name!", Toast.LENGTH_LONG).show();
             return;
@@ -135,7 +125,6 @@ public class AddLocationActivity extends ActionBarActivity implements View.OnCli
         photo.compress(Bitmap.CompressFormat.JPEG, 100 /*ignored for PNG*/, bos);
         final byte[] bitmapData = bos.toByteArray();
         final ByteArrayInputStream bs = new ByteArrayInputStream(bitmapData);
-
         new Thread(new Runnable() {
             @Override
             public void run() {
@@ -159,6 +148,7 @@ public class AddLocationActivity extends ActionBarActivity implements View.OnCli
             @Override
             public void invoke(RequestResult requestResult) {
                 if (requestResult.getSuccess()){
+
                     app.workWith().data(com.telerik.everlive.sdk.core.model.system.File.class)
                             .get()
                             .where(new ValueCondition("Filename", picName, ValueConditionOperator.EqualTo))
@@ -171,7 +161,6 @@ public class AddLocationActivity extends ActionBarActivity implements View.OnCli
 
                                         newLocation.setName(locName);
                                         newLocation.setDescription(locDescription);
-                                        newLocation.setLocation(geolocation);
                                         app.workWith().data(WorkoutLocation.class).create(newLocation).executeAsync(new RequestResultCallbackAction<ArrayList<WorkoutLocation>>() {
                                             @Override
                                             public void invoke(RequestResult<ArrayList<WorkoutLocation>> requestResult) {
