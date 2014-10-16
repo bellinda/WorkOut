@@ -25,6 +25,9 @@ public class HomeActivity extends ActionBarActivity implements View.OnClickListe
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_home);
+        //registerForContextMenu((ListView)findViewById(R.id.listView));
+
+
 
         this.initializeActivity();
     }
