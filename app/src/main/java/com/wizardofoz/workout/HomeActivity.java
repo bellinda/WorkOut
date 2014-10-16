@@ -87,6 +87,6 @@ public class HomeActivity extends ActionBarActivity implements View.OnClickListe
         btnCheckPlaces.setOnClickListener(this);
         btnPlayMusic.setOnClickListener(this);
 
-        mediaPlayer = MediaPlayer.create(this, R.raw.song);
+        //mediaPlayer = MediaPlayer.create(this, R.raw.song);
     }
 }

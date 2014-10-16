@@ -30,7 +30,7 @@ public class GPSTracker extends Service implements LocationListener {
     // Flag for GPS status
     boolean canGetLocation = false;
 
-    Location location; // Location
+    Location location; // com.wizardofoz.workout.local.Location
     double latitude; // Latitude
     double longitude; // Longitude
 
@@ -40,12 +40,16 @@ public class GPSTracker extends Service implements LocationListener {
     // The minimum time between updates in milliseconds
     private static final long MIN_TIME_BW_UPDATES = 1000 * 60 * 1; // 1 minute
 
-    // Declaring a Location Manager
+    // Declaring a com.wizardofoz.workout.local.Location Manager
     protected LocationManager locationManager;
 
     public GPSTracker(Context context) {
         this.mContext = context;
         getLocation();
+    }
+
+    public boolean getNetworkStatus(){
+        return this.isNetworkEnabled;
     }
 
     public Location getLocation() {

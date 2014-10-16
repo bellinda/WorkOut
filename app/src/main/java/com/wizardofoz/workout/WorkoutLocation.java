@@ -14,8 +14,6 @@ public class WorkoutLocation extends DataItem {
     private GeoPoint location;
     @ServerProperty("Picture")
     private UUID picture;
-//    @ServerProperty("Picture")
-//    private String imgId;
     @ServerProperty("Description")
     private String description;
 
@@ -51,12 +49,4 @@ public class WorkoutLocation extends DataItem {
     public void setDescription(String description) {
         this.description = description;
     }
-
-//    public String getImgId() {
-//        return imgId;
-//    }
-//
-//    public void setImgId(String id) {
-//        this.imgId = id;
-//    }
 }
