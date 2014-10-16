@@ -18,6 +18,8 @@ import android.widget.ListView;
 import android.widget.Toast;
 
 import com.telerik.everlive.sdk.core.EverliveApp;
+import com.telerik.everlive.sdk.core.query.definition.sorting.SortDirection;
+import com.telerik.everlive.sdk.core.query.definition.sorting.SortingDefinition;
 import com.telerik.everlive.sdk.core.result.RequestResult;
 import com.telerik.everlive.sdk.core.result.RequestResultCallbackAction;
 import com.wizardofoz.workout.local.Location;
@@ -26,6 +28,7 @@ import com.wizardofoz.workout.local.LocationsDataSource;
 
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 
@@ -176,13 +179,14 @@ public class LocationsActivity extends Activity implements View.OnTouchListener 
                         public void invoke(RequestResult<ArrayList<WorkoutLocation>> requestResult) {
                             if (requestResult.getSuccess()) {
                                 mLocations = requestResult.getValue();
-                                mAdapter = new WorkoutLocationsAdapter(LocationsActivity.this, R.layout.locations_listview_item, mLocations);
+                                Collections.reverse(mLocations);
+                                        mAdapter = new WorkoutLocationsAdapter(LocationsActivity.this, R.layout.locations_listview_item, mLocations);
                                 activity.runOnUiThread(new Runnable() {
                                     @Override
                                     public void run() {
                                         Toast.makeText(context, "Locations loaded!", Toast.LENGTH_LONG).show();
 
-                                        locationsList = (ListView)findViewById(R.id.listView);
+                                        locationsList = (ListView) findViewById(R.id.listView);
 
                                         locationsList.setAdapter(mAdapter);
                                     }

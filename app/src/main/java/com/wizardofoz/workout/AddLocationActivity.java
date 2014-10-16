@@ -1,5 +1,6 @@
 package com.wizardofoz.workout;
 
+import com.telerik.everlive.sdk.core.model.system.GeoPoint;
 import com.wizardofoz.workout.local.Location;
 import com.wizardofoz.workout.local.LocationsDataSource;
 import android.content.Context;
@@ -48,9 +49,12 @@ public class AddLocationActivity extends ActionBarActivity implements View.OnCli
     String locName;
     String locDescription;
     String picName;
+    GeoPoint geolocation;
 
     LocationsDataSource dataSource;
+    GPSTracker tracker;
     EverliveApp app;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -81,9 +85,11 @@ public class AddLocationActivity extends ActionBarActivity implements View.OnCli
 
     private void initialize() {
         app = Everlive.getEverlive();
-        dataSource = new LocationsDataSource(AddLocationActivity.this);
 
         context = this;
+        dataSource = new LocationsDataSource(AddLocationActivity.this);
+        tracker = new GPSTracker(context);
+
         name = (TextView)this.findViewById(R.id.addName);
         description = (EditText)this.findViewById(R.id.addDescription);
         getLocationImage = (Button)this.findViewById(R.id.btnTakePicture);
@@ -106,6 +112,10 @@ public class AddLocationActivity extends ActionBarActivity implements View.OnCli
         newLocation = new WorkoutLocation();
         locName = name.getText().toString();
         locDescription = description.getText().toString();
+        geolocation = new GeoPoint();
+        geolocation.setLatitude(tracker.getLatitude());
+        geolocation.setLongitude(tracker.getLongitude());
+
         if (locName.equals("")){
             Toast.makeText(context, "Invalid name!", Toast.LENGTH_LONG).show();
             return;
@@ -149,7 +159,6 @@ public class AddLocationActivity extends ActionBarActivity implements View.OnCli
             @Override
             public void invoke(RequestResult requestResult) {
                 if (requestResult.getSuccess()){
-
                     app.workWith().data(com.telerik.everlive.sdk.core.model.system.File.class)
                             .get()
                             .where(new ValueCondition("Filename", picName, ValueConditionOperator.EqualTo))
@@ -162,6 +171,7 @@ public class AddLocationActivity extends ActionBarActivity implements View.OnCli
 
                                         newLocation.setName(locName);
                                         newLocation.setDescription(locDescription);
+                                        newLocation.setLocation(geolocation);
                                         app.workWith().data(WorkoutLocation.class).create(newLocation).executeAsync(new RequestResultCallbackAction<ArrayList<WorkoutLocation>>() {
                                             @Override
                                             public void invoke(RequestResult<ArrayList<WorkoutLocation>> requestResult) {
