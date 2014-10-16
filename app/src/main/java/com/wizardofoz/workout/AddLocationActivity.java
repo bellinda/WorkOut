@@ -16,6 +16,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.telerik.everlive.sdk.core.EverliveApp;
+import com.telerik.everlive.sdk.core.model.system.GeoPoint;
 import com.telerik.everlive.sdk.core.query.definition.FileField;
 import com.telerik.everlive.sdk.core.query.definition.filtering.simple.ValueCondition;
 import com.telerik.everlive.sdk.core.query.definition.filtering.simple.ValueConditionOperator;
@@ -51,6 +52,8 @@ public class AddLocationActivity extends ActionBarActivity implements View.OnCli
 
     Activity activity = this;
     LocationsDataSource dataSource;
+    GeoPoint geolocation;
+    GPSTracker tracker;
     EverliveApp app;
 
     @Override
@@ -82,6 +85,8 @@ public class AddLocationActivity extends ActionBarActivity implements View.OnCli
 
     private void initialize() {
         app = Everlive.getEverlive();
+        dataSource = new LocationsDataSource(AddLocationActivity.this);
+        tracker = new GPSTracker(context);
 
         context = this;
         name = (TextView)this.findViewById(R.id.addName);
@@ -106,6 +111,10 @@ public class AddLocationActivity extends ActionBarActivity implements View.OnCli
         newLocation = new WorkoutLocation();
         locName = name.getText().toString();
         locDescription = description.getText().toString();
+        geolocation = new GeoPoint();
+        geolocation.setLatitude(tracker.getLatitude());
+        geolocation.setLongitude(tracker.getLongitude());
+
         if (locName.equals("")){
             Toast.makeText(context, "Invalid name!", Toast.LENGTH_LONG).show();
             return;
@@ -161,6 +170,7 @@ public class AddLocationActivity extends ActionBarActivity implements View.OnCli
 
                                         newLocation.setName(locName);
                                         newLocation.setDescription(locDescription);
+                                        newLocation.setLocation(geolocation);
                                         app.workWith().data(WorkoutLocation.class).create(newLocation).executeAsync(new RequestResultCallbackAction<ArrayList<WorkoutLocation>>() {
                                             @Override
                                             public void invoke(RequestResult<ArrayList<WorkoutLocation>> requestResult) {

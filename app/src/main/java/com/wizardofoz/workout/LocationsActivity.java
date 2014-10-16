@@ -24,6 +24,7 @@ import com.wizardofoz.workout.local.LocationsDataSource;
 
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.Collections;
 
 
 public class LocationsActivity extends Activity implements View.OnTouchListener {
@@ -171,6 +172,7 @@ public class LocationsActivity extends Activity implements View.OnTouchListener 
                         public void invoke(RequestResult<ArrayList<WorkoutLocation>> requestResult) {
                             if (requestResult.getSuccess()) {
                                 mLocations = requestResult.getValue();
+                                Collections.reverse(mLocations);
                                 //mAdapter = new WorkoutLocationsAdapter(LocationsActivity.this, R.layout.locations_listview_item, mLocations);
                                 mAdapter = new WorkoutLocationsAdapter(LocationsActivity.this, R.layout.row_package_layout, mLocations);
                                 activity.runOnUiThread(new Runnable() {

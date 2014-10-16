@@ -46,11 +46,11 @@ public class LocationsDataSource {
         ArrayList<Location> locations = new ArrayList<Location>();
 
         Cursor cursor = database.query(LocationSQLiteHelper.TABLE_LOCATIONS, allColumns, null, null, null, null, null);
-        cursor.moveToFirst();
-        while(!cursor.isAfterLast()){
+        cursor.moveToLast();
+        while(!cursor.isBeforeFirst()){
             Location location = cursorToLocation(cursor);
             locations.add(location);
-            cursor.moveToNext();
+            cursor.moveToPrevious();
         }
 
         cursor.close();
