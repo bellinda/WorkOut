@@ -53,26 +53,30 @@ public class LocationsActivity extends Activity implements View.OnTouchListener 
         locationsList.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
             @Override
             public boolean onItemLongClick(final AdapterView<?> p, View v,final int position, long id) {
-                    final ListView stringslist = (ListView) findViewById(R.id.listView);
-                    final AlertDialog.Builder alert = new AlertDialog.Builder(LocationsActivity.this);
-                    //final int pos = position;
+                //final ListView locationslist = (ListView) findViewById(R.id.listView);
+                final AlertDialog.Builder alert = new AlertDialog.Builder(LocationsActivity.this);
+                //final int pos = position;
 
-                    alert.setTitle("Geolocation");
+                alert.setTitle("Geolocation");
+                //validation
+                if(mLocations.get(position).getLocation() != null) {
                     alert.setMessage("Longitude: " + mLocations.get(position).getLocation().getLongitude() + "\n" + "Latitude: " + mLocations.get(position).getLocation().getLatitude());
+                } else{
+                    alert.setMessage("The GPS coordinates of the location are not available");
+                }
 
-
-                    alert.setPositiveButton("Ok", new DialogInterface.OnClickListener() {
-                        public void onClick(DialogInterface dialog, int whichButton) {
-                            alert.setCancelable(true);
-                        }
-                    });
+                alert.setPositiveButton("Ok", new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int whichButton) {
+                        alert.setCancelable(true);
+                    }
+                });
 //                    alert.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
 //                        public void onClick(DialogInterface dialog, int whichButton) {
 //                        }
 //                    });
-                    alert.show();
-                    return true;
-                }
+                alert.show();
+                return true;
+            }
         });
 
 
