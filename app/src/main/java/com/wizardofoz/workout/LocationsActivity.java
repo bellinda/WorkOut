@@ -3,8 +3,11 @@ package com.wizardofoz.workout;
 import android.app.Activity;
 import android.content.Context;
 import android.os.Bundle;
+import android.util.FloatMath;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.MotionEvent;
+import android.view.View;
 import android.widget.ListView;
 import android.widget.Toast;
 
@@ -15,7 +18,7 @@ import com.telerik.everlive.sdk.core.result.RequestResultCallbackAction;
 import java.util.ArrayList;
 
 
-public class LocationsActivity extends Activity {
+public class LocationsActivity extends Activity implements View.OnTouchListener {
 
     private EverliveApp app;
     private ListView locationsList;
@@ -23,12 +26,17 @@ public class LocationsActivity extends Activity {
     private Context context;
     private WorkoutLocationsAdapter mAdapter;
 
+    private float oldDistance = 0f;
+    //private float textSize = 12f;
+
     private Activity activity = this;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_locations);
+        locationsList = (ListView)findViewById(R.id.listView);
+        locationsList.setOnTouchListener(this);
 
         initialize();
     }
@@ -52,6 +60,19 @@ public class LocationsActivity extends Activity {
         return super.onOptionsItemSelected(item);
     }
 
+    @Override
+    public boolean onTouch(View v, MotionEvent event){
+        if((event.getAction() & MotionEvent.ACTION_MASK) == MotionEvent.ACTION_MOVE){
+            if(event.getPointerCount() == 2){
+                float x = event.getX(0) - event.getX(1);
+                float y = event.getY(0) - event.getY(1);
+                float newDistance = FloatMath.sqrt(x*x + y*y);
+                oldDistance = newDistance;
+            }
+        }
+        return true;
+    }
+
     private void initialize() {
         context = this;
         app = Everlive.getEverlive();
@@ -69,7 +90,7 @@ public class LocationsActivity extends Activity {
                                 public void run() {
                                     Toast.makeText(context, "Locations loaded!", Toast.LENGTH_LONG).show();
 
-                                    locationsList = (ListView)findViewById(R.id.listView);
+//                                    locationsList = (ListView)findViewById(R.id.listView);
 
                                     locationsList.setAdapter(mAdapter);
                                 }
