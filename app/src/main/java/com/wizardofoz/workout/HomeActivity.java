@@ -75,6 +75,7 @@ public class HomeActivity extends ActionBarActivity implements View.OnClickListe
                 mediaPlayer.stop();
                 btnPlayMusic.setText("Turn the music ON");
                 Toast.makeText(this, "Background music stopped", Toast.LENGTH_SHORT).show();
+                mediaPlayer = MediaPlayer.create(this, R.raw.song);
             }
         }
     }
