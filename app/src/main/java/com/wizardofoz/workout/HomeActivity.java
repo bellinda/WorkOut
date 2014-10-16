@@ -15,6 +15,7 @@ public class HomeActivity extends ActionBarActivity implements View.OnClickListe
     private final Context context = this;
     Button btnShowLocations;
     Button btnAddLocation;
+    Button btnCheckPlaces;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -52,8 +53,11 @@ public class HomeActivity extends ActionBarActivity implements View.OnClickListe
         if (id == btnShowLocations.getId()){
             Intent intent = new Intent(HomeActivity.this, LocationsActivity.class);
             startActivity(intent);
-        } else {
+        } else if(id == btnAddLocation.getId()){
             Intent intent = new Intent(HomeActivity.this, AddLocationActivity.class);
+            startActivity(intent);
+        } else {
+            Intent intent = new Intent(HomeActivity.this, CheckForNearPlacesActivity.class);
             startActivity(intent);
         }
     }
@@ -61,8 +65,10 @@ public class HomeActivity extends ActionBarActivity implements View.OnClickListe
     private void initializeActivity(){
         btnShowLocations = (Button)this.findViewById(R.id.btn_locations);
         btnAddLocation = (Button)this.findViewById(R.id.btn_addLcn);
+        btnCheckPlaces = (Button)this.findViewById(R.id.btn_checkPlc);
 
         btnShowLocations.setOnClickListener(this);
         btnAddLocation.setOnClickListener(this);
+        btnCheckPlaces.setOnClickListener(this);
     }
 }

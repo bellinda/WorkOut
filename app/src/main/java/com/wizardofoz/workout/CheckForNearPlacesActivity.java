@@ -14,9 +14,10 @@ import com.telerik.everlive.sdk.core.result.RequestResultCallbackAction;
 
 import java.util.ArrayList;
 
-
-public class LocationsActivity extends Activity {
-
+/**
+ * Created by W510 on 16.10.2014 г..
+ */
+public class CheckForNearPlacesActivity extends Activity {
     private EverliveApp app;
     private ListView locationsList;
     private ArrayList<WorkoutLocation> mLocations;
@@ -28,9 +29,47 @@ public class LocationsActivity extends Activity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_locations);
+        setContentView(R.layout.activity_check_for_places);
 
         initialize();
+    }
+
+    private void initialize() {
+        GPSTracker gpsTracker = new GPSTracker(this);
+        final double currentLat = gpsTracker.getLatitude();
+        final double currentLong = gpsTracker.getLongitude();
+        context = this;
+        app = Everlive.getEverlive();
+        mLocations = null;
+        app.workWith().data(WorkoutLocation.class)
+                .get()
+                .executeAsync(new RequestResultCallbackAction<ArrayList<WorkoutLocation>>() {
+                    @Override
+                    public void invoke(RequestResult<ArrayList<WorkoutLocation>> requestResult) {
+                        if (requestResult.getSuccess()) {
+                            mLocations = requestResult.getValue();
+                            ArrayList<WorkoutLocation> nearLocations = new ArrayList<WorkoutLocation>();
+                            for(WorkoutLocation loc: mLocations){
+                                if(loc.getLocation() != null && Math.floor(loc.getLocation().getLatitude()) == Math.floor(currentLat) && Math.floor(loc.getLocation().getLongitude()) == Math.floor(currentLong)){
+                                    nearLocations.add(loc);
+                                }
+                            }
+                            mAdapter = new WorkoutLocationsAdapter(CheckForNearPlacesActivity.this, R.layout.locations_listview_item, nearLocations);
+                            activity.runOnUiThread(new Runnable() {
+                                @Override
+                                public void run() {
+                                    Toast.makeText(context, "Locations loaded!", Toast.LENGTH_LONG).show();
+
+                                    locationsList = (ListView)findViewById(R.id.listView);
+
+                                    locationsList.setAdapter(mAdapter);
+                                }
+                            });
+                        } else {
+                            Toast.makeText(context, "Couldn't load the locations!", Toast.LENGTH_LONG).show();
+                        }
+                    }
+                });
     }
 
     @Override
@@ -50,34 +89,5 @@ public class LocationsActivity extends Activity {
             return true;
         }
         return super.onOptionsItemSelected(item);
-    }
-
-    private void initialize() {
-        context = this;
-        app = Everlive.getEverlive();
-        mLocations = null;
-        app.workWith().data(WorkoutLocation.class)
-                .get()
-                .executeAsync(new RequestResultCallbackAction<ArrayList<WorkoutLocation>>() {
-                    @Override
-                    public void invoke(RequestResult<ArrayList<WorkoutLocation>> requestResult) {
-                        if (requestResult.getSuccess()) {
-                            mLocations = requestResult.getValue();
-                            mAdapter = new WorkoutLocationsAdapter(LocationsActivity.this, R.layout.locations_listview_item, mLocations);
-                            activity.runOnUiThread(new Runnable() {
-                                @Override
-                                public void run() {
-                                    Toast.makeText(context, "Locations loaded!", Toast.LENGTH_LONG).show();
-
-                                    locationsList = (ListView)findViewById(R.id.listView);
-
-                                    locationsList.setAdapter(mAdapter);
-                                }
-                            });
-                        } else {
-                            Toast.makeText(context, "Couldn't load the locations!", Toast.LENGTH_LONG).show();
-                        }
-                    }
-                });
     }
 }
