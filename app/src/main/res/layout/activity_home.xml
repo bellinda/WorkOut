@@ -23,5 +23,13 @@
         android:layout_width="fill_parent"
         android:layout_height="100dp"
         android:text="Check for places near me"
-        android:id="@+id/btn_checkPlc"/>
+        android:id="@+id/btn_checkPlc"
+        android:layout_marginBottom="50dp"/>
+    />
+
+    <Button
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/btn_music"
+        android:text="Turn the music ON"/>
 </LinearLayout>

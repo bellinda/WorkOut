@@ -2,12 +2,14 @@ package com.wizardofoz.workout;
 
 import android.content.Context;
 import android.content.Intent;
+import android.media.MediaPlayer;
 import android.os.Bundle;
 import android.support.v7.app.ActionBarActivity;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
+import android.widget.Toast;
 
 
 public class HomeActivity extends ActionBarActivity implements View.OnClickListener {
@@ -16,6 +18,8 @@ public class HomeActivity extends ActionBarActivity implements View.OnClickListe
     Button btnShowLocations;
     Button btnAddLocation;
     Button btnCheckPlaces;
+    Button btnPlayMusic;
+    MediaPlayer mediaPlayer;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -56,9 +60,19 @@ public class HomeActivity extends ActionBarActivity implements View.OnClickListe
         } else if(id == btnAddLocation.getId()){
             Intent intent = new Intent(HomeActivity.this, AddLocationActivity.class);
             startActivity(intent);
-        } else {
+        } else if(id == btnCheckPlaces.getId()){
             Intent intent = new Intent(HomeActivity.this, CheckForNearPlacesActivity.class);
             startActivity(intent);
+        } else if(id == btnPlayMusic.getId()){
+            if(mediaPlayer.isPlaying() == false) {
+                mediaPlayer.start();
+                btnPlayMusic.setText("Turn the music OFF");
+                Toast.makeText(this, "Background music started", Toast.LENGTH_SHORT).show();
+            } else {
+                mediaPlayer.stop();
+                btnPlayMusic.setText("Turn the music ON");
+                Toast.makeText(this, "Background music stopped", Toast.LENGTH_SHORT).show();
+            }
         }
     }
 
@@ -66,9 +80,13 @@ public class HomeActivity extends ActionBarActivity implements View.OnClickListe
         btnShowLocations = (Button)this.findViewById(R.id.btn_locations);
         btnAddLocation = (Button)this.findViewById(R.id.btn_addLcn);
         btnCheckPlaces = (Button)this.findViewById(R.id.btn_checkPlc);
+        btnPlayMusic = (Button)this.findViewById(R.id.btn_music);
 
         btnShowLocations.setOnClickListener(this);
         btnAddLocation.setOnClickListener(this);
         btnCheckPlaces.setOnClickListener(this);
+        btnPlayMusic.setOnClickListener(this);
+
+        mediaPlayer = MediaPlayer.create(this, R.raw.song);
     }
 }
