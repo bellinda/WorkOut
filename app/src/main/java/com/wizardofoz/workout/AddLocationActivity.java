@@ -4,15 +4,9 @@ import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
-import android.media.Image;
-import android.net.Uri;
-import android.os.Environment;
+import android.os.Bundle;
 import android.provider.MediaStore;
 import android.support.v7.app.ActionBarActivity;
-import android.os.Bundle;
-import android.util.Base64;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -22,7 +16,6 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.telerik.everlive.sdk.core.EverliveApp;
-import com.telerik.everlive.sdk.core.query.definition.FieldsDefinition;
 import com.telerik.everlive.sdk.core.query.definition.FileField;
 import com.telerik.everlive.sdk.core.query.definition.filtering.simple.ValueCondition;
 import com.telerik.everlive.sdk.core.query.definition.filtering.simple.ValueConditionOperator;
@@ -31,16 +24,10 @@ import com.telerik.everlive.sdk.core.result.RequestResultCallbackAction;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.InputStream;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.Random;
 import java.util.UUID;
-import java.util.concurrent.locks.Condition;
 
 
 public class AddLocationActivity extends ActionBarActivity implements View.OnClickListener{
@@ -74,7 +61,7 @@ public class AddLocationActivity extends ActionBarActivity implements View.OnCli
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
-        getMenuInflater().inflate(R.menu.add_location, menu);
+        getMenuInflater().inflate(R.menu.home, menu);
         return true;
     }
 

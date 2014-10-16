@@ -1,6 +1,9 @@
 package com.wizardofoz.workout;
 
 import android.app.AlertDialog;
+import android.app.Notification;
+import android.app.NotificationManager;
+import android.app.PendingIntent;
 import android.app.Service;
 import android.content.Context;
 import android.content.DialogInterface;
@@ -12,7 +15,6 @@ import android.os.Bundle;
 import android.os.IBinder;
 import android.provider.Settings;
 import android.util.Log;
-import android.widget.Toast;
 
 /**
  * Created by W510 on 16.10.2014 г..
@@ -43,6 +45,9 @@ public class GPSTracker extends Service implements LocationListener {
     // Declaring a Location Manager
     protected LocationManager locationManager;
 
+    //Declaring a Notification Manager
+    protected NotificationManager notifManager;
+
     public GPSTracker(Context context) {
         this.mContext = context;
         getLocation();
@@ -62,7 +67,14 @@ public class GPSTracker extends Service implements LocationListener {
 
             if (!isGPSEnabled && !isNetworkEnabled) {
                 // No network provider is enabled
-                Toast.makeText(this.mContext, "No internet or GPS connection !", Toast.LENGTH_LONG);
+                    //Toast.makeText(this.mContext, "No internet or GPS connection !", Toast.LENGTH_LONG).show();
+                notifManager = (NotificationManager)mContext.getSystemService(Context.NOTIFICATION_SERVICE);
+                Notification notify=new Notification(android.R.drawable.
+                        stat_notify_more,"Warning: No Connection!",System.currentTimeMillis());
+                PendingIntent pending=PendingIntent.getActivity(
+                        getApplicationContext(),0, new Intent(),0);
+                notify.setLatestEventInfo(getApplicationContext(),"No connection","You should turn on either your GPS or your WiFi",pending);
+                notifManager.notify(0, notify);
             } else {
                 this.canGetLocation = true;
                 if (isNetworkEnabled) {
