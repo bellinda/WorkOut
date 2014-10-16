@@ -1,7 +1,11 @@
 package com.wizardofoz.workout;
 
 import android.app.Activity;
+import android.app.Notification;
+import android.app.NotificationManager;
+import android.app.PendingIntent;
 import android.content.Context;
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -23,6 +27,7 @@ public class CheckForNearPlacesActivity extends Activity {
     private ArrayList<WorkoutLocation> mLocations;
     private Context context;
     private WorkoutLocationsAdapter mAdapter;
+    private NotificationManager notifManager;
 
     private Activity activity = this;
 
@@ -54,17 +59,29 @@ public class CheckForNearPlacesActivity extends Activity {
                                     nearLocations.add(loc);
                                 }
                             }
-                            mAdapter = new WorkoutLocationsAdapter(CheckForNearPlacesActivity.this, R.layout.locations_listview_item, nearLocations);
-                            activity.runOnUiThread(new Runnable() {
-                                @Override
-                                public void run() {
-                                    Toast.makeText(context, "Locations loaded!", Toast.LENGTH_LONG).show();
+                            if(nearLocations.isEmpty()){
+                                notifManager = (NotificationManager)context.getSystemService(Context.NOTIFICATION_SERVICE);
+                                Notification notify=new Notification(R.drawable.disconnected,"Warning: No Connection!",System.currentTimeMillis());
+                                PendingIntent pending=PendingIntent.getActivity(
+                                        getApplicationContext(),0, new Intent(),0);
+                                notify.setLatestEventInfo(getApplicationContext(),"No connection","You should turn on either your GPS or your WiFi",pending);
+                                notifManager.notify(0, notify);
+                                finish();
+//                                Toast.makeText(context, "Couldn't load the locations!", Toast.LENGTH_LONG).show();
+//                                Looper.prepare();
+                            } else {
+                                mAdapter = new WorkoutLocationsAdapter(CheckForNearPlacesActivity.this, R.layout.locations_listview_item, nearLocations);
+                                activity.runOnUiThread(new Runnable() {
+                                    @Override
+                                    public void run() {
+                                        Toast.makeText(context, "Locations loaded!", Toast.LENGTH_LONG).show();
 
-                                    locationsList = (ListView)findViewById(R.id.listView);
+                                        locationsList = (ListView) findViewById(R.id.listView);
 
-                                    locationsList.setAdapter(mAdapter);
-                                }
-                            });
+                                        locationsList.setAdapter(mAdapter);
+                                    }
+                                });
+                            }
                         } else {
                             Toast.makeText(context, "Couldn't load the locations!", Toast.LENGTH_LONG).show();
                         }

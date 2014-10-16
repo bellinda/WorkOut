@@ -1,13 +1,19 @@
 package com.wizardofoz.workout;
 
 import android.app.Activity;
+import android.app.AlertDialog;
 import android.content.Context;
 import android.location.LocationManager;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
+import android.content.DialogInterface;
 import android.os.Bundle;
+import android.util.FloatMath;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.MotionEvent;
+import android.view.View;
+import android.widget.AdapterView;
 import android.widget.ListView;
 import android.widget.Toast;
 
@@ -23,7 +29,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 
-public class LocationsActivity extends Activity {
+public class LocationsActivity extends Activity implements View.OnTouchListener {
 
     private EverliveApp app;
     private ListView locationsList;
@@ -32,8 +38,12 @@ public class LocationsActivity extends Activity {
     private Context context;
     private WorkoutLocationsAdapter mAdapter;
     private LocalLocationsAdapter mLocalAdapter;
+    //private RelativeLayout container;
 
     private LocationsDataSource mDataSource;
+
+    private float oldDistance = 0f;
+    //private float textSize = 12f;
 
     private Activity activity = this;
 
@@ -41,10 +51,57 @@ public class LocationsActivity extends Activity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_locations);
+//        container = (RelativeLayout)findViewById(R.id.container);
+//        locationsList.setLayoutParams(new RelativeLayout.LayoutParams(
+//                RelativeLayout.LayoutParams.MATCH_PARENT, RelativeLayout.LayoutParams.MATCH_PARENT));
+//        ZoomView zoomView = new ZoomView(LocationsActivity.this);
+//        zoomView.setLayoutParams(new RelativeLayout.LayoutParams(
+//                RelativeLayout.LayoutParams.MATCH_PARENT, RelativeLayout.LayoutParams.MATCH_PARENT));
+//        zoomView.addView(locationsList);
+//        container.addView(zoomView);
+
+        locationsList = (ListView)findViewById(R.id.listView);
+        locationsList.setOnTouchListener(this);
+        locationsList.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
+            @Override
+            public boolean onItemLongClick(final AdapterView<?> p, View v,final int position, long id) {
+                //final ListView locationslist = (ListView) findViewById(R.id.listView);
+                final AlertDialog.Builder alert = new AlertDialog.Builder(LocationsActivity.this);
+                //final int pos = position;
+
+                alert.setTitle("Geolocation");
+                //validation
+                if(mLocations.get(position).getLocation() != null) {
+                    alert.setMessage("Longitude: " + mLocations.get(position).getLocation().getLongitude() + "\n" + "Latitude: " + mLocations.get(position).getLocation().getLatitude());
+                } else{
+                    alert.setMessage("The GPS coordinates of the location are not available");
+                }
+
+                alert.setPositiveButton("Ok", new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int whichButton) {
+                        alert.setCancelable(true);
+                    }
+                });
+//                    alert.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+//                        public void onClick(DialogInterface dialog, int whichButton) {
+//                        }
+//                    });
+                alert.show();
+                return true;
+            }
+        });
+
 
 
         initialize();
     }
+
+//    protected boolean onLongListItemClick(View v, int pos, long id) {
+//        Log.i("Tapped", "onLongListItemClick id=" + id);
+//        //Intent intent = new Intent(LocationsActivity.this, LocationInfoActivity.class);
+//        return true;
+//    }
+
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -63,6 +120,19 @@ public class LocationsActivity extends Activity {
             return true;
         }
         return super.onOptionsItemSelected(item);
+    }
+
+    @Override
+    public boolean onTouch(View v, MotionEvent event){
+        if((event.getAction() & MotionEvent.ACTION_MASK) == MotionEvent.ACTION_MOVE){
+            if(event.getPointerCount() == 2){
+                float x = event.getX(0) - event.getX(1);
+                float y = event.getY(0) - event.getY(1);
+                float newDistance = FloatMath.sqrt(x*x + y*y);
+                oldDistance = newDistance;
+            }
+        }
+        return true;
     }
 
     private void initialize() {
