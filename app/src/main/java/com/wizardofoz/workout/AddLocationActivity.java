@@ -4,9 +4,15 @@ import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
-import android.os.Bundle;
+import android.graphics.BitmapFactory;
+import android.media.Image;
+import android.net.Uri;
+import android.os.Environment;
 import android.provider.MediaStore;
 import android.support.v7.app.ActionBarActivity;
+import android.os.Bundle;
+import android.util.Base64;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -16,23 +22,31 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.telerik.everlive.sdk.core.EverliveApp;
-import com.telerik.everlive.sdk.core.model.system.GeoPoint;
+import com.telerik.everlive.sdk.core.query.definition.FieldsDefinition;
 import com.telerik.everlive.sdk.core.query.definition.FileField;
+import com.telerik.everlive.sdk.core.query.definition.filtering.simple.ValueCondition;
+import com.telerik.everlive.sdk.core.query.definition.filtering.simple.ValueConditionOperator;
 import com.telerik.everlive.sdk.core.result.RequestResult;
 import com.telerik.everlive.sdk.core.result.RequestResultCallbackAction;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.InputStream;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
+import java.util.Random;
 import java.util.UUID;
+import java.util.concurrent.locks.Condition;
 
 
 public class AddLocationActivity extends ActionBarActivity implements View.OnClickListener{
 
     private static final int CAPTURE_IMAGE_ACTIVITY_REQUEST_CODE = 100;
-    public static final int MEDIA_TYPE_IMAGE = 1;
-    private static final String MEDIA_MOUNTED = "mounted";
+    private static final Random random = new Random();
 
     Context context;
     TextView name;
@@ -40,6 +54,11 @@ public class AddLocationActivity extends ActionBarActivity implements View.OnCli
     Bitmap photo;
     Button getLocationImage;
     Button addLocation;
+
+    WorkoutLocation newLocation;
+    String locName;
+    String locDescription;
+    String picName;
 
     Activity activity = this;
     EverliveApp app;
@@ -55,7 +74,7 @@ public class AddLocationActivity extends ActionBarActivity implements View.OnCli
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
-        getMenuInflater().inflate(R.menu.home, menu);
+        getMenuInflater().inflate(R.menu.add_location, menu);
         return true;
     }
 
@@ -94,14 +113,9 @@ public class AddLocationActivity extends ActionBarActivity implements View.OnCli
     }
 
     private void submitLocation() {
-        final WorkoutLocation newLocation = new WorkoutLocation();
-        final String locName = name.getText().toString();
-        final String locDescription = description.getText().toString();
-
-        GPSTracker gpsTracker = new GPSTracker(this);
-        final double currentLat = gpsTracker.getLatitude();
-        final double currentLong = gpsTracker.getLongitude();
-
+        newLocation = new WorkoutLocation();
+        locName = name.getText().toString();
+        locDescription = description.getText().toString();
         if (locName.equals("")){
             Toast.makeText(context, "Invalid name!", Toast.LENGTH_LONG).show();
             return;
@@ -124,34 +138,48 @@ public class AddLocationActivity extends ActionBarActivity implements View.OnCli
         new Thread(new Runnable() {
             @Override
             public void run() {
-                UploadFile(app, locName, "image/jpeg", bs);
-                activity.runOnUiThread(new Runnable() {
-                    @Override
-                    public void run() {
-                        UUID id = UUID.nameUUIDFromBytes(locName.getBytes());
-                        newLocation.setName(locName);
-                        newLocation.setDescription(locDescription);
-                        newLocation.setPicture(id);
-                        newLocation.setLocation(new GeoPoint(currentLat, currentLong));
-                        app.workWith().data(WorkoutLocation.class).create(newLocation).executeAsync(new RequestResultCallbackAction<ArrayList<WorkoutLocation>>() {
-                            @Override
-                            public void invoke(RequestResult<ArrayList<WorkoutLocation>> requestResult) {
-                                if (requestResult.getSuccess()) {
-                                    navigateToLocations();
-                                } else {
-                                    Toast.makeText(context, "Couldn't load the locations!", Toast.LENGTH_LONG).show();
-                                }
-                            }
-                        });
-                    }
-                });
+                picName = locName + random.nextInt();
+                UploadFile(app, picName, "image/jpeg", bs, newLocation);
             }
         }).start();
     }
 
-    public void UploadFile(EverliveApp app, String fileName, String contentType, InputStream inputStream) {
+    public void UploadFile(final EverliveApp app, String fileName, String contentType, InputStream inputStream, final WorkoutLocation newLocation) {
         FileField fileField = new FileField(fileName, contentType, inputStream);
-        app.workWith().files().upload(fileField).executeAsync();
+        app.workWith().files().upload(fileField).executeAsync(new RequestResultCallbackAction() {
+            @Override
+            public void invoke(RequestResult requestResult) {
+                if (requestResult.getSuccess()){
+
+                    app.workWith().data(com.telerik.everlive.sdk.core.model.system.File.class)
+                            .get()
+                            .where(new ValueCondition("Filename", picName, ValueConditionOperator.EqualTo))
+                            .executeAsync(new RequestResultCallbackAction<ArrayList<com.telerik.everlive.sdk.core.model.system.File>>() {
+                                @Override
+                                public void invoke(RequestResult<ArrayList<com.telerik.everlive.sdk.core.model.system.File>> requestResult) {
+                                    if (requestResult.getSuccess()) {
+                                        UUID id = requestResult.getValue().get(0).getId();
+                                        newLocation.setPicture(id);
+
+                                        newLocation.setName(locName);
+                                        newLocation.setDescription(locDescription);
+                                        app.workWith().data(WorkoutLocation.class).create(newLocation).executeAsync(new RequestResultCallbackAction<ArrayList<WorkoutLocation>>() {
+                                            @Override
+                                            public void invoke(RequestResult<ArrayList<WorkoutLocation>> requestResult) {
+                                                if (requestResult.getSuccess()) {
+                                                    navigateToLocations();
+                                                } else {
+                                                }
+                                            }
+                                        });
+                                    } else {
+
+                                    }
+                                }
+                            });
+                }
+            }
+        });
     }
 
     @Override
@@ -176,7 +204,6 @@ public class AddLocationActivity extends ActionBarActivity implements View.OnCli
     }
 
     private void takePicture() {
-        //TODO: Take the picture, load it to the image file, upload to Everlive.
         Intent camera = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
 
         this.startActivityForResult(camera, CAPTURE_IMAGE_ACTIVITY_REQUEST_CODE);
