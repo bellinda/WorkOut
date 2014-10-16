@@ -7,7 +7,6 @@ import android.database.sqlite.SQLiteDatabase;
 
 import java.sql.SQLException;
 import java.util.ArrayList;
-import java.util.List;
 
 
 public class LocationsDataSource {
@@ -47,11 +46,11 @@ public class LocationsDataSource {
         ArrayList<Location> locations = new ArrayList<Location>();
 
         Cursor cursor = database.query(LocationSQLiteHelper.TABLE_LOCATIONS, allColumns, null, null, null, null, null);
-        cursor.moveToLast();
-        while(!cursor.isBeforeFirst()){
+        cursor.moveToFirst();
+        while(!cursor.isAfterLast()){
             Location location = cursorToLocation(cursor);
             locations.add(location);
-            cursor.moveToPrevious();
+            cursor.moveToNext();
         }
 
         cursor.close();
