@@ -10,17 +10,8 @@ import android.view.MotionEvent;
 import android.view.View;
 import android.widget.FrameLayout;
 
-/**
- * Zooming view.
- */
 public class ZoomView extends FrameLayout {
 
-    /**
-     * Zooming view listener interface.
-     *
-     * @author karooolek
-     *
-     */
     public interface ZoomViewListener {
 
         void onZoomStarted(float zoom, float zoomx, float zoomy);
@@ -36,7 +27,7 @@ public class ZoomView extends FrameLayout {
     float smoothZoom = 1.0f;
     float zoomX, zoomY;
     float smoothZoomX, smoothZoomY;
-    private boolean scrolling; // NOPMD by karooolek on 29.06.11 11:45
+    private boolean scrolling;
 
     // minimap variables
     private boolean showMinimap = false;
