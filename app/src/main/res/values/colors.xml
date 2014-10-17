@@ -11,4 +11,10 @@
 
     <color name="background_new_tag">#ff0000</color>
     <color name="text_new_tag">#ffffff</color>
+
+    <!--NavigationDrawer colors-->
+    <color name="list_item_title">#fff</color>
+    <color name="list_background">#303030</color>
+    <color name="list_background_pressed">#992416</color>
+    <color name="list_divider">#272727</color>
 </resources>

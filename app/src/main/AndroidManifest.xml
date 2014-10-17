@@ -37,6 +37,14 @@
             android:name=".CheckForNearPlacesActivity"
             android:label="CheckForNearPlacesActivity">
         </activity>
+        <activity
+            android:name=".MusicActivity"
+            android:label="MusicActivity">
+        </activity>
+        <activity
+            android:name=".MainPageActivity"
+            android:label="MainPage">
+        </activity>
     </application>
 
 </manifest>

@@ -27,7 +27,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 
 
-public class LocationsActivity extends Activity implements View.OnTouchListener {
+public class LocationsActivity extends HomeActivity implements View.OnTouchListener {
 
     private EverliveApp app;
     private ListView locationsList;

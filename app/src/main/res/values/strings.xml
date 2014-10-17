@@ -8,5 +8,29 @@
     <string name="title_activity_add_location">AddLocationActivity</string>
     <string name="add_location">Add Location</string>
     <string name="locations">Locations</string>
+    <string name="drawer_open">Slider Menu Opened</string>
+    <string name="drawer_close">Slider Menu Closed</string>
+
+    <!-- Nav Drawer Menu Items -->
+    <string-array name="nav_drawer_items">
+        <item >Home</item>
+        <item >Locations</item>
+        <item >Add location</item>
+        <item >Check for places near me</item>
+        <item >Background music</item>
+    </string-array>
+
+    <!-- Nav Drawer List Item Icons -->
+    <!-- Keep them in order as the titles are in -->
+    <array name="nav_drawer_icons">
+        <item>@drawable/ic_home</item>
+        <item>@drawable/ic_location</item>
+        <item>@drawable/ic_add_location</item>
+        <item>@drawable/ic_check_places</item>
+        <item>@drawable/ic_music</item>
+    </array>
+
+    <!-- Content Description -->
+    <string name="desc_list_item_icon">Item Icon</string>
 
 </resources>
